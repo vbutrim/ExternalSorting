@@ -33,7 +33,11 @@ class FileSplitterService {
     Map<String, File> split(File file) {
         System.out.println("File size: " + file.length() + " bytes");
         File tempFolderDir = createTempDir(file);
-        return readNLinesSortThemAndSavePerFile(file, tempFolderDir);
+        Map<String, File> files = readNLinesSortThemAndSavePerFile(file, tempFolderDir);
+
+        System.out.println("Temp files:" + System.lineSeparator() + "    - " + String.join(System.lineSeparator() + "    - ", files.keySet()));
+
+        return files;
     }
 
     private File createTempDir(File file) {

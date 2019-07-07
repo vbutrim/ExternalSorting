@@ -27,6 +27,7 @@ public final class ExternalSortingService {
 
         ExternalSortingService sorting = new ExternalSortingService(Main.getInjector().getInstance(FileSplitterService.class));
 
-        Map<String, File> separatedFiles = sorting.fileSplitterService.split(file);
+        Map<String, File> separatedSortedFiles = sorting.fileSplitterService.split(file);
+
     }
 }

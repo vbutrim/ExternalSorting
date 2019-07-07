@@ -9,7 +9,6 @@ import static helpers.GlobalProperties.IS_64BIT_SYSTEM;
 public final class StringSizeEstimator {
 
 
-
     private static final long CONST_SIZE_OF_STRING;
 
     static {
