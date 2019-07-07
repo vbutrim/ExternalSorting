@@ -37,7 +37,5 @@ public final class ExternalSortingService {
         Map<String, File> separatedSortedFiles = sorting.fileSplitterService.split(file);
 
         sorting.mergeSortService.mergeSortedFilesAndSave(separatedSortedFiles, pathToSave);
-
-        System.out.println(System.lineSeparator() + "> Request completed");
     }
 }

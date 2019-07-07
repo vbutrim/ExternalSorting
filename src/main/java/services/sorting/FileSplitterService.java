@@ -24,8 +24,6 @@ import static helpers.GlobalProperties.TEMP_DIR_NAME;
 @Singleton
 class FileSplitterService {
 
-    private static int barrierOfLines = 5;
-
     /*
      * Returns sorted files, that can be read in memory
      */
@@ -55,7 +53,7 @@ class FileSplitterService {
 
         int countOfFile = 1;
         long currentInMemoryBytes = 0L;
-        List<String> sortedStrings = new ArrayList<>(barrierOfLines);
+        List<String> sortedStrings = new ArrayList<>();
         String nameOfFile = fileToRead.getName();
 
         try (FileInputStream inputStream = new FileInputStream(fileToRead.getAbsolutePath());
@@ -67,34 +65,30 @@ class FileSplitterService {
 
                 if (currentInMemoryBytes > GlobalProperties.IN_MEMORY_LIMIT_BYTES_FOR_READ) {
                     File newTempFile = new File(folderToWrite.getAbsolutePath(), nameOfFile + "_" + countOfFile++);
-                    Collections.sort(sortedStrings);
-                    writeNSortedLinesToFile(newTempFile.getAbsolutePath(), sortedStrings);
+                    sortAndWriteNLinesToFile(newTempFile.getAbsolutePath(), sortedStrings);
                     sortedStrings.clear();
                     currentInMemoryBytes = 0L;
 
                     filePerName.put(newTempFile.getName(), newTempFile);
                 }
             }
-
-            if (sc.ioException() != null) {
-                throw sc.ioException();
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         File newTempFile = new File(folderToWrite.getAbsolutePath(), nameOfFile + "_" + countOfFile);
-        Collections.sort(sortedStrings);
-        writeNSortedLinesToFile(newTempFile.getAbsolutePath(), sortedStrings);
+
+        sortAndWriteNLinesToFile(newTempFile.getAbsolutePath(), sortedStrings);
         sortedStrings.clear();
         filePerName.put(newTempFile.getName(), newTempFile);
 
         return filePerName;
     }
 
-    private void writeNSortedLinesToFile(String path, List<String> data) {
+    private void sortAndWriteNLinesToFile(String path, List<String> stringsToWrite) {
+        Collections.sort(stringsToWrite);
         try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8))) {
-            for (String s : data) {
+            for (String s : stringsToWrite) {
                 pw.println(s);
             }
             pw.flush();

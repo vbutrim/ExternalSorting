@@ -12,9 +12,11 @@ public final class StringSizeEstimator {
     private static final long CONST_SIZE_OF_STRING;
 
     static {
-        CONST_SIZE_OF_STRING = IS_64BIT_SYSTEM ? 16 : 8 +   // HEADER
-                3 * (IS_64BIT_SYSTEM ? 8 : 4) +             // INT fields (x3)
-                (IS_64BIT_SYSTEM ? 8 : 4);                  // Reference on Object
+        long headerSize = IS_64BIT_SYSTEM ? 16 : 8;
+        long intFieldSize = IS_64BIT_SYSTEM ? 8 : 4; // #3
+        int referenceSize = IS_64BIT_SYSTEM ? 8 : 4;
+
+        CONST_SIZE_OF_STRING = headerSize + 3 * intFieldSize + referenceSize;
     }
 
     private StringSizeEstimator() {

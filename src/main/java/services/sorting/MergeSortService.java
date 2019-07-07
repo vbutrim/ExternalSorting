@@ -1,17 +1,16 @@
 package services.sorting;
 
 import com.google.inject.Singleton;
+import services.generating.BigFileService;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -25,7 +24,7 @@ final class MergeSortService {
 
     void mergeSortedFilesAndSave(Map<String, File> sortedFiles, String pathToSave) throws IOException {
 
-        mergeSortedFiles(getInputReaders(sortedFiles.values()), getOutputWriter(pathToSave));
+        mergeSortedFiles(getInputReaders(sortedFiles.values()), BigFileService.getNewFileWriter(pathToSave));
 
         for (File eachFile : sortedFiles.values()) {
             eachFile.delete();
@@ -65,23 +64,6 @@ final class MergeSortService {
         }
 
         bfWriter.close();
-    }
-
-    private BufferedWriter getOutputWriter(String pathToSave) throws IOException {
-        System.out.println("File output: " + pathToSave);
-        File outputFile = new File(pathToSave);
-
-        if (outputFile.exists()) {
-            outputFile.delete();
-        }
-        outputFile.createNewFile();
-
-        try {
-            return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile, true)));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            throw new Error("Runtime of service has been interrupted");
-        }
     }
 
     private List<SmartBufferedReader> getInputReaders(Collection<File> sortedFiles) throws IOException {
