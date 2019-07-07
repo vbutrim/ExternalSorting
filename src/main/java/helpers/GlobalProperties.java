@@ -8,9 +8,11 @@ public class GlobalProperties {
 
     public static final long IN_MEMORY_LIMIT_BYTES_FOR_READ = 120_000_000L * 9 / 10; // 10% space for checking
 
-    public static final String DATA_INPUT_TXT = "data/input.txt";
+    public static final String DATA_FOLDER = "data/";
 
-    public static final String DATA_OUTPUT_TXT = "data/output.txt";
+    public static final String DATA_INPUT_TXT = DATA_FOLDER + "input.txt";
+
+    public static final String DATA_OUTPUT_TXT = DATA_FOLDER + "output.txt";
 
     public static final long LINES_COUNT_IN_GENERATING_FILE = 1_000_000;
 

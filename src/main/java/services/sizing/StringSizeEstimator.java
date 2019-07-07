@@ -1,6 +1,5 @@
 package services.sizing;
 
-
 import static helpers.GlobalProperties.IS_64BIT_SYSTEM;
 
 /*

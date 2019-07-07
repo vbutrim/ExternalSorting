@@ -4,3 +4,9 @@
 \target/
 
 ExternalSorting\.iml
+
+data/input\.txt
+
+data/output\.txt
+
+sorting\.jar
