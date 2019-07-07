@@ -29,7 +29,6 @@ class FileSplitterService {
     /*
      * Returns sorted files, that can be read in memory
      */
-
     Map<String, File> split(File file) {
         System.out.println("File size: " + file.length() + " bytes");
         File tempFolderDir = createTempDir(file);
@@ -85,6 +84,7 @@ class FileSplitterService {
         }
 
         File newTempFile = new File(folderToWrite.getAbsolutePath(), nameOfFile + "_" + countOfFile);
+        Collections.sort(sortedStrings);
         writeNSortedLinesToFile(newTempFile.getAbsolutePath(), sortedStrings);
         sortedStrings.clear();
         filePerName.put(newTempFile.getName(), newTempFile);

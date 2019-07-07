@@ -5,8 +5,10 @@ import com.google.inject.Injector;
 import helpers.InjectingModule;
 import services.sorting.ExternalSortingService;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
+import static helpers.GlobalProperties.DATA_INPUT_TXT;
+import static helpers.GlobalProperties.DATA_OUTPUT_TXT;
 import static helpers.GlobalProperties.IN_MEMORY_LIMIT_BYTES_FOR_READ;
 import static helpers.GlobalProperties.IS_64BIT_SYSTEM;
 import static helpers.GlobalProperties.TEMP_DIR_NAME;
@@ -14,6 +16,7 @@ import static helpers.GlobalProperties.TEMP_DIR_NAME;
 public class Main {
 
     private static final Injector injector = Guice.createInjector(new InjectingModule());
+
 
     static {
         System.out.println("====================================================");
@@ -23,8 +26,8 @@ public class Main {
         System.out.println("====================================================");
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-        ExternalSortingService.sortAndSave("data/input.txt");
+    public static void main(String[] args) throws IOException {
+        ExternalSortingService.sortAndSave(DATA_INPUT_TXT, DATA_OUTPUT_TXT);
     }
 
     public static Injector getInjector() {
