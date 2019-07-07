@@ -1,6 +1,8 @@
 package services.sorting;
 
 import com.google.inject.Singleton;
+import helpers.GlobalProperties;
+import services.sizing.StringSizeEstimator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,27 +19,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import static helpers.GlobalProperties.TEMP_DIR_NAME;
+
 @Singleton
 class FileSplitterService {
 
-    private static final String TEMP_DIR_NAME = "temp";
-    private static final int BARRIER_OF_LINES = 5;
+    private static int barrierOfLines = 5;
 
     /*
      * Returns sorted files, that can be read in memory
      */
 
     Map<String, File> split(File file) {
+        System.out.println("File size: " + file.length() + " bytes");
         File tempFolderDir = createTempDir(file);
         return readNLinesSortThemAndSavePerFile(file, tempFolderDir);
     }
 
     private File createTempDir(File file) {
         File tempFolder = new File(file.getParentFile().getPath(), TEMP_DIR_NAME);
-        System.out.println(tempFolder);
         if (!tempFolder.exists()) {
             tempFolder.mkdir();
         }
+
+        System.out.println("Using temp folder: " + tempFolder);
 
         return tempFolder;
     }
@@ -46,22 +51,23 @@ class FileSplitterService {
         Map<String, File> filePerName = new HashMap<>();
 
         int countOfFile = 1;
-        int countOfInMemoryLines = 0;
-        List<String> sortedStrings = new ArrayList<>(BARRIER_OF_LINES);
+        long currentInMemoryBytes = 0L;
+        List<String> sortedStrings = new ArrayList<>(barrierOfLines);
         String nameOfFile = fileToRead.getName();
 
         try (FileInputStream inputStream = new FileInputStream(fileToRead.getAbsolutePath());
              Scanner sc = new Scanner(inputStream, StandardCharsets.UTF_8)) {
             while (sc.hasNextLine()) {
-                ++countOfInMemoryLines;
-                sortedStrings.add(sc.nextLine());
+                String line = sc.nextLine();
+                sortedStrings.add(line);
+                currentInMemoryBytes += StringSizeEstimator.getSizeOf(line);
 
-                if (countOfInMemoryLines > BARRIER_OF_LINES - 1) {
+                if (currentInMemoryBytes > GlobalProperties.IN_MEMORY_LIMIT_BYTES_FOR_READ) {
                     File newTempFile = new File(folderToWrite.getAbsolutePath(), nameOfFile + "_" + countOfFile++);
                     Collections.sort(sortedStrings);
                     writeNSortedLinesToFile(newTempFile.getAbsolutePath(), sortedStrings);
                     sortedStrings.clear();
-                    countOfInMemoryLines = 0;
+                    currentInMemoryBytes = 0L;
 
                     filePerName.put(newTempFile.getName(), newTempFile);
                 }

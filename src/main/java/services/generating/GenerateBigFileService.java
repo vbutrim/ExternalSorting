@@ -1,4 +1,8 @@
 package services.generating;
 
-public class GenerateBigFileService {
+public final class GenerateBigFileService {
+
+    public static void generateFile(int linesCount, int maxCharsInLine) {
+
+    }
 }
