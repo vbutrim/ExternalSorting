@@ -10,11 +10,12 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
-import java.util.TreeSet;
 
 @Singleton
 class FileSplitterService {
@@ -32,24 +33,13 @@ class FileSplitterService {
     }
 
     private File createTempDir(File file) {
-        File tempFolder = new File(file.getParentFile().getPath() + File.separator + TEMP_DIR_NAME);
+        File tempFolder = new File(file.getParentFile().getPath(), TEMP_DIR_NAME);
         System.out.println(tempFolder);
         if (!tempFolder.exists()) {
-            deleteDirectory(tempFolder);
             tempFolder.mkdir();
         }
 
         return tempFolder;
-    }
-
-    private boolean deleteDirectory(File directoryToBeDeleted) {
-        File[] allContents = directoryToBeDeleted.listFiles();
-        if (allContents != null) {
-            for (File file : allContents) {
-                deleteDirectory(file);
-            }
-        }
-        return directoryToBeDeleted.delete();
     }
 
     private Map<String, File> readNLinesSortThemAndSavePerFile(File fileToRead, File folderToWrite) {
@@ -57,7 +47,7 @@ class FileSplitterService {
 
         int countOfFile = 1;
         int countOfInMemoryLines = 0;
-        Set<String> sortedStrings = new TreeSet<>();
+        List<String> sortedStrings = new ArrayList<>(BARRIER_OF_LINES);
         String nameOfFile = fileToRead.getName();
 
         try (FileInputStream inputStream = new FileInputStream(fileToRead.getAbsolutePath());
@@ -67,7 +57,8 @@ class FileSplitterService {
                 sortedStrings.add(sc.nextLine());
 
                 if (countOfInMemoryLines > BARRIER_OF_LINES - 1) {
-                    File newTempFile = new File(folderToWrite.getAbsolutePath() + File.separator + nameOfFile + "_" + countOfFile++);
+                    File newTempFile = new File(folderToWrite.getAbsolutePath(), nameOfFile + "_" + countOfFile++);
+                    Collections.sort(sortedStrings);
                     writeNSortedLinesToFile(newTempFile.getAbsolutePath(), sortedStrings);
                     sortedStrings.clear();
                     countOfInMemoryLines = 0;
@@ -83,10 +74,15 @@ class FileSplitterService {
             e.printStackTrace();
         }
 
+        File newTempFile = new File(folderToWrite.getAbsolutePath(), nameOfFile + "_" + countOfFile);
+        writeNSortedLinesToFile(newTempFile.getAbsolutePath(), sortedStrings);
+        sortedStrings.clear();
+        filePerName.put(newTempFile.getName(), newTempFile);
+
         return filePerName;
     }
 
-    private void writeNSortedLinesToFile(String path, Set<String> data) {
+    private void writeNSortedLinesToFile(String path, List<String> data) {
         try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8))) {
             for (String s : data) {
                 pw.println(s);

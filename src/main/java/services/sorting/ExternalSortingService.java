@@ -4,6 +4,7 @@ import main.Main;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Map;
 
 public final class ExternalSortingService {
 
@@ -26,6 +27,6 @@ public final class ExternalSortingService {
 
         ExternalSortingService sorting = new ExternalSortingService(Main.getInjector().getInstance(FileSplitterService.class));
 
-        sorting.fileSplitterService.split(file);
+        Map<String, File> separatedFiles = sorting.fileSplitterService.split(file);
     }
 }
