@@ -30,9 +30,7 @@ public final class ExternalSortingService {
 
         System.out.println("File input: " + pathToRead);
 
-        ExternalSortingService sorting = new ExternalSortingService(
-                Main.getInjector().getInstance(FileSplitterService.class),
-                Main.getInjector().getInstance(MergeSortService.class));
+        ExternalSortingService sorting = new ExternalSortingService(new FileSplitterService(), new MergeSortService());
 
         Map<String, File> separatedSortedFiles = sorting.fileSplitterService.split(file);
 
